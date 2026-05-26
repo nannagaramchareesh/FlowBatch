@@ -56,7 +56,7 @@ const Analytics = () => {
 
   return (
     <div style={{ marginTop: '2rem', paddingBottom: '3rem' }}>
-      <div className="flex justify-between items-center" style={{ marginBottom: '2rem' }}>
+      <div className="flex-header" style={{ marginBottom: '2rem' }}>
         <h2>Analytics & Reporting</h2>
       </div>
 
@@ -94,7 +94,7 @@ const Analytics = () => {
       </div>
 
       {/* Charts Section */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(400px, 1fr))', gap: '2rem' }}>
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '2rem' }}>
         
         {/* Bottlenecks Bar Chart */}
         <div className="task-card">

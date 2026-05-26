@@ -78,7 +78,7 @@ const Inventory = () => {
 
   return (
     <div style={{ marginTop: '2rem', paddingBottom: '3rem' }}>
-      <div className="flex justify-between items-center" style={{ marginBottom: '2rem' }}>
+      <div className="flex-header" style={{ marginBottom: '2rem' }}>
         <h2>Inventory Upload</h2>
       </div>
 
@@ -133,7 +133,7 @@ const Inventory = () => {
 
       {previewData.length > 0 && (
         <div style={{ marginTop: '3rem' }}>
-          <div className="flex justify-between items-center mb-4">
+          <div className="flex-header mb-4">
             <h3>Preview Data</h3>
             <div className="flex items-center gap-4">
               <span className="text-success">{validCount} Valid</span>

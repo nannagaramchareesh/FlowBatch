@@ -119,7 +119,7 @@ const Batches = () => {
 
   return (
     <div style={{ marginTop: '2rem', paddingBottom: '3rem' }}>
-      <div className="flex justify-between items-center" style={{ marginBottom: '2rem' }}>
+      <div className="flex-header" style={{ marginBottom: '2rem' }}>
         <h2>Batch Summaries</h2>
       </div>
 

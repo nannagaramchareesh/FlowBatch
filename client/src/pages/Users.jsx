@@ -137,7 +137,7 @@ const Users = () => {
 
   return (
     <div style={{ marginTop: '2rem', paddingBottom: '3rem' }}>
-      <div className="flex justify-between items-center" style={{ marginBottom: '2rem' }}>
+      <div className="flex-header" style={{ marginBottom: '2rem' }}>
         <h2 className="flex items-center gap-2"><UsersIcon /> Team Management</h2>
         <button className="btn-primary flex items-center gap-2" onClick={() => { editingUser ? handleCancel() : setShowAddForm(!showAddForm); }}>
           <Plus size={18} /> Add User
@@ -154,7 +154,7 @@ const Users = () => {
         <form onSubmit={handleSubmit} className="task-card" style={{ marginBottom: '2rem', borderTop: '4px solid var(--accent-primary)' }}>
           <h3 style={{ marginBottom: '1.5rem' }}>{editingUser ? `Edit User: ${editingUser.name}` : 'Create New User'}</h3>
           
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem', marginBottom: '1.5rem' }}>
+          <div className="grid-2" style={{ marginBottom: '1.5rem' }}>
             <div className="form-group" style={{ marginBottom: 0 }}>
               <label className="form-label">Full Name</label>
               <input type="text" name="name" className="form-input" required value={formData.name} onChange={handleInputChange} />

@@ -110,11 +110,11 @@ const AdminTasks = () => {
 
   return (
     <div style={{ marginTop: '2rem', paddingBottom: '3rem' }}>
-      <div className="flex justify-between items-center" style={{ marginBottom: '2rem' }}>
+      <div className="flex-header" style={{ marginBottom: '2rem' }}>
         <h2>All Tasks</h2>
         
-        <div className="flex items-center" style={{ gap: '1rem' }}>
-          <div className="flex items-center" style={{ gap: '0.5rem', marginRight: '1rem', borderRight: '1px solid var(--border-color)', paddingRight: '1.5rem' }}>
+        <div className="flex items-center flex-wrap" style={{ gap: '1rem', justifyContent: 'center' }}>
+          <div className="flex items-center flex-wrap quick-select-panel" style={{ gap: '0.5rem', marginRight: '1rem', borderRight: '1px solid var(--border-color)', paddingRight: '1.5rem' }}>
             <span style={{ fontSize: '0.875rem', color: 'var(--text-secondary)' }}>Quick Select:</span>
             <button className="btn-primary" style={{ padding: '0.4rem 0.8rem', fontSize: '0.8rem', backgroundColor: 'var(--bg-card)', color: 'var(--text-primary)', border: '1px solid var(--border-color)' }} onClick={() => handleQuickSelect(20)}>20</button>
             <button className="btn-primary" style={{ padding: '0.4rem 0.8rem', fontSize: '0.8rem', backgroundColor: 'var(--bg-card)', color: 'var(--text-primary)', border: '1px solid var(--border-color)' }} onClick={() => handleQuickSelect(30)}>30</button>
@@ -173,7 +173,7 @@ const AdminTasks = () => {
       )}
 
       {/* Filters */}
-      <div className="task-card flex items-center" style={{ gap: '1.5rem', marginBottom: '1.5rem', padding: '1rem 1.25rem' }}>
+      <div className="task-card flex items-center flex-wrap" style={{ gap: '1.5rem', marginBottom: '1.5rem', padding: '1rem 1.25rem' }}>
         <div className="flex items-center" style={{ gap: '0.5rem', color: 'var(--text-secondary)' }}>
           <Filter size={18} />
           <span style={{ fontWeight: 500 }}>Filters:</span>

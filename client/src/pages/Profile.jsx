@@ -90,7 +90,7 @@ const Profile = () => {
 
   return (
     <div style={{ marginTop: '2rem', paddingBottom: '3rem', maxWidth: '600px', margin: '2rem auto' }}>
-      <div className="flex justify-between items-center" style={{ marginBottom: '2rem' }}>
+      <div className="flex-header" style={{ marginBottom: '2rem' }}>
         <h2 className="flex items-center gap-2"><UserIcon className="text-accent-primary" /> Account Settings</h2>
       </div>
 
@@ -152,7 +152,7 @@ const Profile = () => {
           />
         </div>
 
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
+        <div className="grid-2">
           <div className="form-group">
             <label className="form-label">New Password</label>
             <input 

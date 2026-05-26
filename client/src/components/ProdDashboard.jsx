@@ -174,7 +174,7 @@ const RoleDashboard = ({ user }) => {
 
             return (
               <div key={batch._id} className="task-card" style={{ padding: 0, overflow: 'hidden' }}>
-                <div style={{ backgroundColor: 'var(--bg-secondary)', padding: '1.25rem 1.5rem', borderBottom: '1px solid var(--border-color)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                <div className="flex-header" style={{ backgroundColor: 'var(--bg-secondary)', padding: '1.25rem 1.5rem', borderBottom: '1px solid var(--border-color)' }}>
                   <div>
                     <h3 style={{ margin: 0, color: 'var(--text-primary)', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
                       <Layers size={20} className="text-accent-primary" />
@@ -276,7 +276,7 @@ const RoleDashboard = ({ user }) => {
                   })()}
 
                   {/* Mandatory Upload for Next Stage / Return */}
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+                  <div className="flex-header" style={{ gap: '1rem' }}>
                     <div style={{ flex: 1 }}>
                       <h4 style={{ fontSize: '0.85rem', color: 'var(--text-primary)', marginBottom: '0.25rem' }}>
                         <span style={{ color: '#ef4444' }}>*</span> Mandatory Excel Upload
