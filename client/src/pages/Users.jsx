@@ -217,7 +217,10 @@ const Users = () => {
             </tr>
           </thead>
           <tbody>
-            {users.map(u => (
+            {users.filter(u => {
+              const roles = (u.roles && u.roles.length > 0) ? u.roles : (u.role ? [u.role] : []);
+              return !roles.includes('admin');
+            }).map(u => (
               <tr key={u._id}>
                 <td style={{ fontWeight: 500, color: 'var(--text-primary)' }}>
                   {u.name}
