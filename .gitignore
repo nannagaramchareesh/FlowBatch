@@ -1,0 +1,28 @@
+# Node modules
+node_modules/
+client/node_modules/
+server/node_modules/
+
+# Environment files
+.env
+.env.local
+*.env
+server/.env
+
+# Production builds
+client/dist/
+
+# Local uploads
+server/uploads/*
+!server/uploads/.gitkeep
+
+# System & Editor files
+.DS_Store
+.vscode/
+.idea/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+*.log
