@@ -194,3 +194,57 @@ export const updateProfile = async (req, res) => {
     res.status(500).json({ message: 'Server Error' });
   }
 };
+
+// @desc    Update a user (by admin)
+// @route   PUT /api/auth/users/:id
+// @access  Public (should be Admin)
+export const updateUser = async (req, res) => {
+  const { name, email, password, roles } = req.body;
+
+  try {
+    const user = await User.findById(req.params.id);
+
+    if (user) {
+      user.name = name || user.name;
+      user.email = email || user.email;
+      if (roles) {
+        user.roles = roles;
+      }
+      if (password) {
+        user.password = password; // mongoose pre-save hook will hash it automatically
+      }
+
+      const updatedUser = await user.save();
+      res.json({
+        _id: updatedUser._id,
+        name: updatedUser.name,
+        email: updatedUser.email,
+        roles: updatedUser.roles,
+      });
+    } else {
+      res.status(404).json({ message: 'User not found' });
+    }
+  } catch (error) {
+    console.error('Update user error:', error);
+    res.status(500).json({ message: 'Server Error' });
+  }
+};
+
+// @desc    Delete a user (by admin)
+// @route   DELETE /api/auth/users/:id
+// @access  Public (should be Admin)
+export const deleteUser = async (req, res) => {
+  try {
+    const user = await User.findById(req.params.id);
+
+    if (user) {
+      await user.deleteOne();
+      res.json({ message: 'User removed successfully' });
+    } else {
+      res.status(404).json({ message: 'User not found' });
+    }
+  } catch (error) {
+    console.error('Delete user error:', error);
+    res.status(500).json({ message: 'Server Error' });
+  }
+};

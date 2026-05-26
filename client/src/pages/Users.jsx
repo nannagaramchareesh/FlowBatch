@@ -1,14 +1,17 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import axios from 'axios';
-import { Users as UsersIcon, Plus, Loader, Shield } from 'lucide-react';
+import { Users as UsersIcon, Plus, Loader, Shield, Edit2, Trash2 } from 'lucide-react';
+import { AuthContext } from '../context/AuthContext';
 
 const API_USERS = '/api/auth/users';
 const API_REGISTER = '/api/auth/register';
 
 const Users = () => {
+  const { user: currentUser } = useContext(AuthContext);
   const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(true);
   const [showAddForm, setShowAddForm] = useState(false);
+  const [editingUser, setEditingUser] = useState(null);
   const [error, setError] = useState('');
   
   // New user form state
@@ -57,6 +60,40 @@ const Users = () => {
     }
   };
 
+  const handleEditClick = (u) => {
+    setEditingUser(u);
+    setFormData({
+      name: u.name,
+      email: u.email,
+      password: '', // Blank by default, optional on edit
+      roles: (u.roles && u.roles.length > 0) ? u.roles : (u.role ? [u.role] : ['production'])
+    });
+    setShowAddForm(true);
+  };
+
+  const handleCancel = () => {
+    setShowAddForm(false);
+    setEditingUser(null);
+    setFormData({ name: '', email: '', password: '', roles: ['production'] });
+  };
+
+  const handleDelete = async (u) => {
+    if (currentUser && currentUser._id === u._id) {
+      setError('You cannot delete your own account');
+      return;
+    }
+
+    if (window.confirm(`Are you sure you want to delete user "${u.name}"?`)) {
+      try {
+        await axios.delete(`${API_USERS}/${u._id}`);
+        fetchUsers();
+      } catch (err) {
+        console.error(err);
+        setError(err.response?.data?.message || 'Error deleting user');
+      }
+    }
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (formData.roles.length === 0) {
@@ -65,15 +102,32 @@ const Users = () => {
     }
 
     try {
-      // In a real app, you might have a protected POST /api/auth/users
-      // We added this in authController.js as createUser
-      await axios.post(API_USERS, formData);
-      setShowAddForm(false);
-      setFormData({ name: '', email: '', password: '', roles: ['production'] });
+      if (editingUser) {
+        // Edit mode
+        const payload = {
+          name: formData.name,
+          email: formData.email,
+          roles: formData.roles
+        };
+        // Only include password if it's set
+        if (formData.password) {
+          payload.password = formData.password;
+        }
+        await axios.put(`${API_USERS}/${editingUser._id}`, payload);
+      } else {
+        // Create mode
+        if (!formData.password) {
+          setError('Password is required when creating a user');
+          return;
+        }
+        await axios.post(API_USERS, formData);
+      }
+      
+      handleCancel();
       fetchUsers();
     } catch (err) {
       console.error(err);
-      setError(err.response?.data?.message || 'Error creating user');
+      setError(err.response?.data?.message || `Error ${editingUser ? 'updating' : 'creating'} user`);
     }
   };
 
@@ -85,7 +139,7 @@ const Users = () => {
     <div style={{ marginTop: '2rem', paddingBottom: '3rem' }}>
       <div className="flex justify-between items-center" style={{ marginBottom: '2rem' }}>
         <h2 className="flex items-center gap-2"><UsersIcon /> Team Management</h2>
-        <button className="btn-primary flex items-center gap-2" onClick={() => setShowAddForm(!showAddForm)}>
+        <button className="btn-primary flex items-center gap-2" onClick={() => { editingUser ? handleCancel() : setShowAddForm(!showAddForm); }}>
           <Plus size={18} /> Add User
         </button>
       </div>
@@ -98,7 +152,7 @@ const Users = () => {
 
       {showAddForm && (
         <form onSubmit={handleSubmit} className="task-card" style={{ marginBottom: '2rem', borderTop: '4px solid var(--accent-primary)' }}>
-          <h3 style={{ marginBottom: '1.5rem' }}>Create New User</h3>
+          <h3 style={{ marginBottom: '1.5rem' }}>{editingUser ? `Edit User: ${editingUser.name}` : 'Create New User'}</h3>
           
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem', marginBottom: '1.5rem' }}>
             <div className="form-group" style={{ marginBottom: 0 }}>
@@ -112,8 +166,8 @@ const Users = () => {
           </div>
           
           <div className="form-group">
-            <label className="form-label">Temporary Password</label>
-            <input type="password" name="password" className="form-input" required value={formData.password} onChange={handleInputChange} style={{ maxWidth: '400px' }} />
+            <label className="form-label">{editingUser ? 'New Password (leave blank to keep current)' : 'Temporary Password'}</label>
+            <input type="password" name="password" className="form-input" required={!editingUser} value={formData.password} onChange={handleInputChange} style={{ maxWidth: '400px' }} />
           </div>
 
           <div className="form-group">
@@ -145,8 +199,8 @@ const Users = () => {
           </div>
 
           <div className="flex justify-end gap-2" style={{ marginTop: '2rem' }}>
-            <button type="button" className="btn-primary" style={{ backgroundColor: 'var(--bg-secondary)', color: 'var(--text-primary)' }} onClick={() => setShowAddForm(false)}>Cancel</button>
-            <button type="submit" className="btn-primary">Create User</button>
+            <button type="button" className="btn-primary" style={{ backgroundColor: 'var(--bg-secondary)', color: 'var(--text-primary)' }} onClick={handleCancel}>Cancel</button>
+            <button type="submit" className="btn-primary">{editingUser ? 'Update User' : 'Create User'}</button>
           </div>
         </form>
       )}
@@ -159,12 +213,18 @@ const Users = () => {
               <th>Email Address</th>
               <th>Assigned Roles</th>
               <th>Joined Date</th>
+              <th style={{ textAlign: 'right' }}>Actions</th>
             </tr>
           </thead>
           <tbody>
             {users.map(u => (
               <tr key={u._id}>
-                <td style={{ fontWeight: 500, color: 'var(--text-primary)' }}>{u.name}</td>
+                <td style={{ fontWeight: 500, color: 'var(--text-primary)' }}>
+                  {u.name}
+                  {currentUser && currentUser._id === u._id && (
+                    <span style={{ fontSize: '0.75rem', color: 'var(--accent-primary)', marginLeft: '0.5rem', fontStyle: 'italic' }}>(You)</span>
+                  )}
+                </td>
                 <td style={{ color: 'var(--text-secondary)' }}>{u.email}</td>
                 <td>
                   <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap' }}>
@@ -190,6 +250,36 @@ const Users = () => {
                 </td>
                 <td style={{ color: 'var(--text-secondary)', fontSize: '0.875rem' }}>
                   {new Date(u.createdAt).toLocaleDateString()}
+                </td>
+                <td style={{ textAlign: 'right' }}>
+                  <div className="flex justify-end gap-2">
+                    <button 
+                      onClick={() => handleEditClick(u)}
+                      className="btn-primary" 
+                      style={{ padding: '0.4rem 0.6rem', fontSize: '0.75rem', backgroundColor: 'var(--stage-qc)', display: 'flex', alignItems: 'center', gap: '0.25rem' }}
+                      title="Edit User"
+                    >
+                      <Edit2 size={12} /> Edit
+                    </button>
+                    <button 
+                      onClick={() => handleDelete(u)}
+                      className="btn-primary" 
+                      style={{ 
+                        padding: '0.4rem 0.6rem', 
+                        fontSize: '0.75rem', 
+                        backgroundColor: '#ef4444', 
+                        display: 'flex', 
+                        alignItems: 'center', 
+                        gap: '0.25rem',
+                        opacity: currentUser && currentUser._id === u._id ? 0.5 : 1,
+                        cursor: currentUser && currentUser._id === u._id ? 'not-allowed' : 'pointer'
+                      }}
+                      disabled={currentUser && currentUser._id === u._id}
+                      title="Delete User"
+                    >
+                      <Trash2 size={12} /> Delete
+                    </button>
+                  </div>
                 </td>
               </tr>
             ))}
